@@ -14,7 +14,7 @@ const byV=useMemo(()=>new Map(variants.map(v=>[v.id,v])),[variants]),byP=useMemo
 const rows=cart.map(i=>({i,v:byV.get(i.variantId),p:products.find(p=>p.id===byV.get(i.variantId)?.product_id),pr:byPrice.get(i.variantId)})).filter(x=>x.v&&x.p&&x.pr),total=rows.reduce((n,x)=>n+Number(x.pr.amount)*x.i.quantity,0),count=cart.reduce((n,x)=>n+x.quantity,0);
 const add=(pid:string)=>{const v=byP.get(pid);if(!v)return;setCart((c:any[])=>c.some(x=>x.variantId===v.id)?c.map(x=>x.variantId===v.id?{...x,quantity:x.quantity+1}:x):[...c,{variantId:v.id,quantity:1}]);setMsg('تمت الإضافة للسلة')};
 const toggle=(id:string)=>setWish(w=>w.includes(id)?w.filter(x=>x!==id):[...w,id]);
-async function search(){const{data,error}=await db.rpc('search_products',{p_query:q,p_available_only:true,p_limit:30});if(error)setErr(error.message);else setResults(data||[])}
+async function search(){const{data,error}=await catalog.rpc('search_products',{p_query:q,p_min_price:null,p_max_price:null,p_available_only:true,p_limit:30});if(error)setErr(error.message);else setResults(data||[])}
 async function openProduct(slug:string){const{data,error}=await catalog.from('machine_commerce_feed').select('*').eq('slug',slug).maybeSingle();if(error)setErr(error.message);else setDetail(data)}
 async function auth(mode:string){const r=mode==='in'?await db.auth.signInWithPassword({email,password}):await db.auth.signUp({email,password,options:{data:{display_name:name,phone}}});if(r.error)setErr(r.error.message);else setMsg('تم بنجاح')}
 async function loadOrders(){if(!session)return;const{data,error}=await commerce.from('orders').select('id,order_number,status,currency,grand_total,created_at').order('created_at',{ascending:false}).limit(30);if(error)setErr(error.message);else setOrders(data||[])}
