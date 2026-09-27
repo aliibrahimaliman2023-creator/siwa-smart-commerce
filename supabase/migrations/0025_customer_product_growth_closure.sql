@@ -1,0 +1,2 @@
+-- SIWA SMART COMMERCE — customer/product/growth gap closure
+-- Mirrors live migration 0025_customer_product_growth_closure.

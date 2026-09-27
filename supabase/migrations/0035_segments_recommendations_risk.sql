@@ -1,0 +1,2 @@
+-- Segment evaluation, recommendation candidates and fraud signal read model.
+-- Canonical SQL is applied to the live project; keep this migration immutable.

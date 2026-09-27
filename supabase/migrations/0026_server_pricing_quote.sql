@@ -1,0 +1,2 @@
+-- SIWA SMART COMMERCE — server pricing quote
+-- Mirrors live migration 0026_server_pricing_quote.
