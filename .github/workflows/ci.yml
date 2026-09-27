@@ -1,12 +1,41 @@
 name: CI
-on: [push,pull_request]
+on:
+  push:
+  pull_request:
 jobs:
   static:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python - <<'PY'
-from pathlib import Path
-names=[p.name for p in sorted(Path('supabase/migrations').glob('*.sql'))]
-assert [p[:4] for p in names]==[f'{i:04d}' for i in range(1,41)]
-PY
+      - name: Validate repository
+        run: |
+          test -d supabase/migrations
+          test -d supabase/functions
+          test -d tests
+          test -f package.json
+      - name: Validate migration sequence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          names=[p.name for p in sorted(Path("supabase/migrations").glob("*.sql"))]
+          actual=[p[:4] for p in names]
+          expected=[f"{i:04d}" for i in range(1,41)]
+          assert actual==expected, (actual, expected)
+          PY
+      - name: Secret file guard
+        run: |
+          ! find . -type f -name '.env' -not -path './node_modules/*' | grep -q .
+      - name: Install
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.0 --activate
+          pnpm install --no-frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Build
+        run: pnpm build
+      - name: Contract tests
+        run: |
+          node tests/unit/pricing-contract.test.mjs
+          node tests/integration/inventory-contract.test.mjs
+          node tests/security/idempotency-contract.test.mjs
