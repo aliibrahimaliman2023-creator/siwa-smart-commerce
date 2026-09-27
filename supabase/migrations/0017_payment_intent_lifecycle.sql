@@ -20,15 +20,16 @@ revoke all on function commerce.create_payment_intent(uuid,text,text) from publi
 grant execute on function commerce.create_payment_intent(uuid,text,text) to authenticated;
 
 create or replace function commerce.record_payment_intent_result(p_payment_intent_id uuid,p_status text,p_provider_reference text default null,p_raw_response jsonb default '{}')
-returns commerce.payment_intents language plpgsql security definer set search_path=commerce,finance,customer,platform,public as $$
+returns commerce.payment_intents language plpgsql security definer set search_path=commerce,finance,platform,public as $$
 declare v_pi commerce.payment_intents; v_order commerce.orders;
 begin
  if auth.uid() is null then raise exception 'UNAUTHENTICATED'; end if;
+ if not platform.has_permission(auth.uid(),'payments.manage') then raise exception 'FORBIDDEN'; end if;
  select * into v_pi from commerce.payment_intents where id=p_payment_intent_id for update;
  if not found then raise exception 'PAYMENT_INTENT_NOT_FOUND'; end if;
  select * into v_order from commerce.orders where id=v_pi.order_id for update;
- if not (platform.has_permission(auth.uid(),'payments.manage') or v_order.customer_id=(select c.id from customer.customers c where c.auth_user_id=auth.uid())) then raise exception 'FORBIDDEN'; end if;
  if p_status not in ('created','pending','succeeded','failed','cancelled') then raise exception 'INVALID_PAYMENT_STATUS'; end if;
+ if v_pi.status in ('succeeded','failed','cancelled') and p_status<>v_pi.status then raise exception 'PAYMENT_INTENT_FINAL'; end if;
  update commerce.payment_intents set status=p_status,provider_reference=coalesce(p_provider_reference,provider_reference),raw_response=coalesce(p_raw_response,'{}'),updated_at=now() where id=p_payment_intent_id returning * into v_pi;
  if p_status='succeeded' then
   insert into finance.payments(order_id,provider_code,provider_reference,amount,currency,status,paid_at,payload)
