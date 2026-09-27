@@ -16,7 +16,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           names=[p.name for p in sorted(Path('supabase/migrations').glob('*.sql'))]
-          expected=[f'{i:04d}' for i in range(1,16)]
+          expected=[f'{i:04d}' for i in range(1,17)]
           actual=[p[:4] for p in names]
           assert actual==expected, (actual,expected)
           PY
