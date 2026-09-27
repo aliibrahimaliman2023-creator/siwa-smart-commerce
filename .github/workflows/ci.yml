@@ -19,7 +19,7 @@ jobs:
           from pathlib import Path
           names=[p.name for p in sorted(Path("supabase/migrations").glob("*.sql"))]
           actual=[p[:4] for p in names]
-          expected=[f"{i:04d}" for i in range(1,41)]
+          expected=[f"{i:04d}" for i in range(1,44)]
           assert actual==expected, (actual, expected)
           PY
       - name: Secret file guard
