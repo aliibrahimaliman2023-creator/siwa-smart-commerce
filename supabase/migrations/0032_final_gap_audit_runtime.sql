@@ -1,0 +1,2 @@
+-- Final gap audit runtime: gift registry, wishlist alerts, demand forecasting, data quality, carrier scoring, business-rule evaluation.
+-- Canonical SQL is applied to the live project; keep this migration immutable.
