@@ -23,6 +23,15 @@ jobs:
       - name: Secret file guard
         run: |
           if find . -type f -name '.env' -not -path './node_modules/*' | grep -q .; then exit 1; fi
+      - name: Install dependencies
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.0 --activate
+          pnpm install --no-frozen-lockfile
+      - name: Runtime typecheck and build
+        run: |
+          pnpm typecheck
+          pnpm build
       - name: Contract tests
         run: |
           node tests/unit/pricing-contract.test.mjs
