@@ -1,18 +1,16 @@
-# SIWA SMART COMMERCE
+# SIWA Smart Commerce
 
-Implementation baseline for a modular, AI-ready commerce and operations platform built around Supabase + Cloudflare + GitHub.
+AI-ready commerce and operations platform for Siwa products.
+
+## Stack
+Supabase + PostgreSQL + Auth + Storage + Edge Functions, Cloudflare, GitHub.
 
 ## Principles
-- Free-first / open-source-first
-- Server-authoritative commerce logic
-- PostgreSQL transactions and row locking for inventory-sensitive operations
-- RLS + permissions + auditability
-- Provider adapters to avoid lock-in
-- No silent business decisions
+- Free-first and open-source where practical.
+- Modular monolith.
+- Server-authoritative pricing and checkout.
+- RLS and permission-driven access.
+- Inventory reservations and audit history.
+- AI writes require approval by default.
 
-See `MASTER_INDEX.md` and `docs/52_MASTER_EXECUTION_ORDER.md`.
-
-## Runtime MVP
-The repository contains runnable Vite Storefront/Admin shells and an authenticated Supabase checkout RPC.
-
-Before production: configure Supabase, apply migrations, seed data, define OPEN business decisions, connect provider adapters, and run the full CI/E2E suite in a network-enabled environment.
+See `docs/IMPLEMENTATION_STATUS.md` and `docs/FINAL_GAP_AUDIT.md` before deployment.
