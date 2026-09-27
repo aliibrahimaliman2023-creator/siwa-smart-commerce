@@ -1,0 +1,3 @@
+-- SIWA SMART COMMERCE — gap closure foundation
+-- Mirrors live migration 0024_gap_closure_foundation.
+-- See Supabase migration history for the applied version.
