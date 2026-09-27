@@ -1,0 +1,35 @@
+-- 0029_gap_closure_security.sql
+-- RLS is enabled by 0024/0025 in the live project and is replayed defensively here.
+alter table if exists customer.wallets enable row level security;
+alter table if exists customer.wallet_transactions enable row level security;
+alter table if exists commerce.coupons enable row level security;
+alter table if exists commerce.offers enable row level security;
+alter table if exists logistics.shipping_rules enable row level security;
+alter table if exists logistics.shipping_methods enable row level security;
+alter table if exists marketing.tracking_events enable row level security;
+alter table if exists communication.support_tickets enable row level security;
+alter table if exists communication.support_messages enable row level security;
+alter table if exists growth.membership_tiers enable row level security;
+alter table if exists growth.customer_memberships enable row level security;
+drop policy if exists "wallet owner read" on customer.wallets;
+create policy "wallet owner read" on customer.wallets for select to authenticated using(customer_id=(select c.id from customer.customers c where c.auth_user_id=(select auth.uid()) limit 1));
+drop policy if exists "wallet tx owner read" on customer.wallet_transactions;
+create policy "wallet tx owner read" on customer.wallet_transactions for select to authenticated using(customer_id=(select c.id from customer.customers c where c.auth_user_id=(select auth.uid()) limit 1));
+drop policy if exists "coupon active read" on commerce.coupons;
+create policy "coupon active read" on commerce.coupons for select to authenticated using(status='active' and (starts_at is null or starts_at<=now()) and (ends_at is null or ends_at>now()));
+drop policy if exists "shipping active read" on logistics.shipping_rules;
+create policy "shipping active read" on logistics.shipping_rules for select to authenticated using(status='active');
+drop policy if exists "methods active read" on logistics.shipping_methods;
+create policy "methods active read" on logistics.shipping_methods for select to authenticated using(status='active');
+drop policy if exists "tracking own create" on marketing.tracking_events;
+create policy "tracking own create" on marketing.tracking_events for insert to authenticated with check(customer_id is null or customer_id=(select c.id from customer.customers c where c.auth_user_id=(select auth.uid()) limit 1));
+drop policy if exists "support own read" on communication.support_tickets;
+create policy "support own read" on communication.support_tickets for select to authenticated using(customer_id=(select c.id from customer.customers c where c.auth_user_id=(select auth.uid()) limit 1) or platform.has_permission((select auth.uid()),'orders.read'));
+drop policy if exists "support own create" on communication.support_tickets;
+create policy "support own create" on communication.support_tickets for insert to authenticated with check(customer_id=(select c.id from customer.customers c where c.auth_user_id=(select auth.uid()) limit 1));
+drop policy if exists "support messages read" on communication.support_messages;
+create policy "support messages read" on communication.support_messages for select to authenticated using(exists(select 1 from communication.support_tickets t where t.id=ticket_id and (t.customer_id=(select c.id from customer.customers c where c.auth_user_id=(select auth.uid()) limit 1) or platform.has_permission((select auth.uid()),'orders.read'))));
+drop policy if exists "membership owner read" on growth.customer_memberships;
+create policy "membership owner read" on growth.customer_memberships for select to authenticated using(customer_id=(select c.id from customer.customers c where c.auth_user_id=(select auth.uid()) limit 1) or platform.has_permission((select auth.uid()),'orders.read'));
+drop policy if exists "tiers read" on growth.membership_tiers;
+create policy "tiers read" on growth.membership_tiers for select to authenticated using(status='active');
