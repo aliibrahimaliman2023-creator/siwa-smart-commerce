@@ -39,3 +39,12 @@ jobs:
           node tests/unit/pricing-contract.test.mjs
           node tests/integration/inventory-contract.test.mjs
           node tests/security/idempotency-contract.test.mjs
+      - name: Runtime contract checks
+        run: |
+          test -f supabase/functions/checkout/index.ts
+          test -f supabase/functions/api-v1/index.ts
+          test -f supabase/functions/checkout-recovery/index.ts
+          ! grep -RInE "db\.from\(['\"](commerce|inventory|production|logistics|catalog|marketing|cms|identity|platform|finance|customer|communication)\." apps --include='*.ts' --include='*.tsx'
+          grep -RIn "idempotency-key" apps/storefront/src apps/admin/src supabase/functions/checkout/index.ts
+          grep -RIn "checkout_atomic_v2" supabase/functions/checkout supabase/migrations
+          echo "runtime contracts: ok"
