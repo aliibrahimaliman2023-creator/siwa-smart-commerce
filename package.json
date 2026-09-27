@@ -6,8 +6,8 @@
   "scripts": {
     "dev:storefront": "pnpm --dir apps/storefront dev",
     "dev:admin": "pnpm --dir apps/admin dev",
-    "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck",
+    "build": "pnpm --filter @siwa/storefront build && pnpm --filter @siwa/admin build",
+    "typecheck": "pnpm --filter @siwa/storefront typecheck && pnpm --filter @siwa/admin typecheck",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "free-first:check": "node scripts/free-first-check.mjs",
