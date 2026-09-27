@@ -7,7 +7,7 @@ const CART_KEY='siwa-cart-v1';
 type Product={id:string;slug:string;name_ar:string;description_ar:string|null;brand_name:string|null};
 type Variant={id:string;product_id:string;sku:string;name_ar:string|null};
 type Price={product_variant_id:string;amount:number;currency:string};
-type CartItem={variantId:string;quantity:number};
+type CartItem={variantId:string;quantity:number};type CartDetail=CartItem&{v:Variant;p:Product;price:Price};
 function App(){
 const[products,setProducts]=useState<Product[]>([]),[variants,setVariants]=useState<Variant[]>([]),[prices,setPrices]=useState<Price[]>([]);
 const[session,setSession]=useState<Session|null>(null),[cart,setCart]=useState<CartItem[]>(()=>JSON.parse(localStorage.getItem(CART_KEY)||'[]'));
@@ -21,7 +21,7 @@ useEffect(()=>{(async()=>{setLoading(true);const[p,v,l]=await Promise.all([db.fr
 useEffect(()=>localStorage.setItem(CART_KEY,JSON.stringify(cart)),[cart]);
 const variantByProduct=useMemo(()=>new Map(variants.map(v=>[v.product_id,v])),[variants]);
 const priceByVariant=useMemo(()=>new Map(prices.map(p=>[p.product_variant_id,p])),[prices]);
-const cartDetails=useMemo(()=>cart.map(i=>{const v=variants.find(x=>x.id===i.variantId);const p=products.find(x=>x.id===v?.product_id);const price=priceByVariant.get(i.variantId);return{...i,v,p,price}}).filter(x=>x.v&&x.p&&x.price),[cart,variants,products,priceByVariant]);
+const cartDetails=useMemo<CartDetail[]>(()=>cart.map(i=>{const v=variants.find(x=>x.id===i.variantId);const p=products.find(x=>x.id===v?.product_id);const price=priceByVariant.get(i.variantId);return{...i,v,p,price} as CartDetail}).filter(x=>Boolean(x.v&&x.p&&x.price)),[cart,variants,products,priceByVariant]);
 const total=cartDetails.reduce((s,x)=>s+x.price.amount*x.quantity,0);const count=cart.reduce((s,x)=>s+x.quantity,0);
 function add(productId:string){const v=variantByProduct.get(productId);if(!v){setError('المنتج غير متاح للبيع حاليًا');return}setCart(c=>{const old=c.find(x=>x.variantId===v.id);return old?c.map(x=>x.variantId===v.id?{...x,quantity:x.quantity+1}:x):[...c,{variantId:v.id,quantity:1}]});setMessage('تمت إضافة المنتج للسلة');setShowCart(true)}
 function change(id:string,q:number){setCart(c=>q<1?c.filter(x=>x.variantId!==id):c.map(x=>x.variantId===id?{...x,quantity:q}:x))}
