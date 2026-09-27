@@ -1,9 +1,9 @@
 -- 0021_ai_guardrails.sql
 alter table ai.action_requests enable row level security;
 alter table ai.recommendations enable row level security;
-create policy ai_action_requests_read on ai.action_requests for select to authenticated using(requested_by=auth.uid() or platform.has_permission(auth.uid(),'orders.manage'));
-create policy ai_action_requests_create on ai.action_requests for insert to authenticated with check(requested_by=auth.uid());
-create policy ai_recommendations_read on ai.recommendations for select to authenticated using(platform.has_permission(auth.uid(),'orders.read'));
+drop policy if exists ai_action_requests_read on ai.action_requests; create policy ai_action_requests_read on ai.action_requests for select to authenticated using(requested_by=auth.uid() or platform.has_permission(auth.uid(),'orders.manage'));
+drop policy if exists ai_action_requests_create on ai.action_requests; create policy ai_action_requests_create on ai.action_requests for insert to authenticated with check(requested_by=auth.uid());
+drop policy if exists ai_recommendations_read on ai.recommendations; create policy ai_recommendations_read on ai.recommendations for select to authenticated using(platform.has_permission(auth.uid(),'orders.read'));
 create or replace function ai.request_action(p_action_type text,p_target_type text,p_target_id uuid,p_payload jsonb,p_risk_level text default 'medium')
 returns ai.action_requests language plpgsql security definer set search_path=ai,public as $$
 declare r ai.action_requests;
