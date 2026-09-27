@@ -2,6 +2,7 @@ import React,{useEffect,useMemo,useState}from'react';
 import{createRoot}from'react-dom/client';
 import{createClient,Session}from'@supabase/supabase-js';
 import'./styles.css';
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 const db=createClient(import.meta.env.VITE_SUPABASE_URL,import.meta.env.VITE_SUPABASE_ANON_KEY);
 const CART_KEY='siwa-cart-v1';
 type Product={id:string;slug:string;name_ar:string;description_ar:string|null;brand_name:string|null};
