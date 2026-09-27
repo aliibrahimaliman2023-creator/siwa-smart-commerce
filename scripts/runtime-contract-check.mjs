@@ -12,10 +12,20 @@ for (const file of requiredFunctions) {
   assert.ok(existsSync(file), `missing required edge function: ${file}`);
 }
 
-const sourceFiles = globSync('apps/**/*.{ts,tsx}', { nodir: true });
+function sourceFiles(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) out.push(...sourceFiles(path));
+    else if (/\.(ts|tsx)$/.test(entry.name)) out.push(path);
+  }
+  return out;
+}
+
+const files = sourceFiles('apps');
 const forbidden = /db\.from\(['"](commerce|inventory|production|logistics|catalog|marketing|cms|identity|platform|finance|customer|communication)\./;
 
-for (const file of sourceFiles) {
+for (const file of files) {
   const content = readFileSync(file, 'utf8');
   assert.equal(forbidden.test(content), false, `invalid domain-schema access in ${file}`);
 }
