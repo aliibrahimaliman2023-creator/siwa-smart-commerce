@@ -110,7 +110,7 @@ begin
  if not exists(select 1 from catalog.product_variants where id=p_product_variant_id and status='active') then raise exception 'VARIANT_NOT_FOUND'; end if;
  insert into customer.wishlist_items(wishlist_id,product_variant_id) values(w,p_product_variant_id)
  on conflict(wishlist_id,product_variant_id) do nothing returning * into v;
- if v.id is null then select * into v from customer.wishlist_items where wishlist_id=w and product_variant_id=p_product_variant_id; end if;
+ if v.wishlist_id is null then select * into v from customer.wishlist_items where wishlist_id=w and product_variant_id=p_product_variant_id; end if;
  return v;
 end $$;
 revoke all on function customer.add_wishlist_item(uuid,uuid) from public;
