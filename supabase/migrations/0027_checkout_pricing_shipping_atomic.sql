@@ -1,0 +1,2 @@
+-- SIWA SMART COMMERCE — atomic checkout v2
+-- Mirrors live migration 0027_checkout_pricing_shipping_atomic.
