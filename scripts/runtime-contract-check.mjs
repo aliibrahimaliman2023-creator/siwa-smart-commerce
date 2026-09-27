@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { globSync } from 'glob';
+import { readdirSync } from 'node:fs';
 
 const requiredFunctions = [
   'supabase/functions/checkout/index.ts',
