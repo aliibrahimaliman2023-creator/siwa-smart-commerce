@@ -1,0 +1,2 @@
+-- Canonical live migration 0036: stock adjustments, QC results, refunds, AI conversations/approvals, experiment exposures, compatibility views, RLS and guarded functions.
+-- Applied to Supabase project before release testing.
