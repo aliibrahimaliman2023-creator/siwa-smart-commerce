@@ -37,8 +37,8 @@ const recovery = readFileSync('supabase/functions/checkout-recovery/index.ts', '
 
 assert.match(storefront, /idempotencyKey/);
 assert.match(storefront, /from'\.\/money'/);
-assert.equal(/\\bNumber\\(/.test(storefront), false, 'storefront must not use Number() for monetary arithmetic');
-assert.equal(/\\bparseFloat\\(/.test(storefront), false, 'storefront must not use parseFloat() for monetary arithmetic');
+assert.equal(/\bNumber\(/.test(storefront), false, 'storefront must not use Number() for monetary arithmetic');
+assert.equal(/\bparseFloat\(/.test(storefront), false, 'storefront must not use parseFloat() for monetary arithmetic');
 assert.match(money, /BigInt/);
 assert.match(money, /multiplyMoney/);
 assert.match(storefront, /idempotency-key/);
