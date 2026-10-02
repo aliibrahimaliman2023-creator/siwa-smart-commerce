@@ -34,6 +34,8 @@ const storefront = readFileSync('apps/storefront/src/main.tsx', 'utf8');
 const money = readFileSync('apps/storefront/src/money.ts', 'utf8');
 const checkout = readFileSync('supabase/functions/checkout/index.ts', 'utf8');
 const recovery = readFileSync('supabase/functions/checkout-recovery/index.ts', 'utf8');
+const admin = readFileSync('apps/admin/src/main.tsx', 'utf8');
+const adminMoney = readFileSync('apps/admin/src/money.ts', 'utf8');
 
 assert.match(storefront, /idempotencyKey/);
 assert.match(storefront, /from'\.\/money'/);
@@ -46,5 +48,10 @@ assert.match(storefront, /functions\.invoke\(['"]checkout-recovery['"]/);
 assert.match(checkout, /checkout_atomic_v2/);
 assert.match(recovery, /Authorization/);
 assert.match(recovery, /UNAUTHENTICATED/);
+assert.match(admin, /from'\.\/money'/);
+assert.match(admin, /formatMoney\(o\.grand_total\)/);
+assert.equal(/Number\(o\.grand_total\)/.test(admin), false, 'admin must not use Number() for monetary totals');
+assert.equal(/parseFloat\(o\.grand_total\)/.test(admin), false, 'admin must not use parseFloat() for monetary totals');
+assert.match(adminMoney, /BigInt/);
 
 console.log('runtime contracts: ok');
