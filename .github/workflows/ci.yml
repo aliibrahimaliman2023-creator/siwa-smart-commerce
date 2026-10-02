@@ -39,5 +39,6 @@ jobs:
           node tests/unit/pricing-contract.test.mjs
           node tests/integration/inventory-contract.test.mjs
           node tests/security/idempotency-contract.test.mjs
+          node tests/integration/checkout-rpc-contract.test.mjs
       - name: Runtime contract checks
         run: pnpm verify:runtime
