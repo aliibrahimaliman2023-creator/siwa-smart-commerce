@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --config vite.admin.config.ts",
+    "build": "vite build",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "deploy": "wrangler deploy"
