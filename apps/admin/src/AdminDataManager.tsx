@@ -3,10 +3,9 @@ import{createClient}from'@supabase/supabase-js';
 
 const url=import.meta.env.VITE_SUPABASE_URL;
 const key=import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase=createClient(url,key);
-const catalog=supabase.schema('catalog');
-const inventory=supabase.schema('inventory');
-const logistics=supabase.schema('logistics');
+const catalog=createClient(url,key,{db:{schema:'catalog'}});
+const inventory=createClient(url,key,{db:{schema:'inventory'}});
+const logistics=createClient(url,key,{db:{schema:'logistics'}});
 
 type Props={onChanged:()=>Promise<void>};
 
