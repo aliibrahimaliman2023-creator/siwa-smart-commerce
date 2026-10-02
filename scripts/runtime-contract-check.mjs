@@ -31,10 +31,16 @@ for (const file of files) {
 }
 
 const storefront = readFileSync('apps/storefront/src/main.tsx', 'utf8');
+const money = readFileSync('apps/storefront/src/money.ts', 'utf8');
 const checkout = readFileSync('supabase/functions/checkout/index.ts', 'utf8');
 const recovery = readFileSync('supabase/functions/checkout-recovery/index.ts', 'utf8');
 
 assert.match(storefront, /idempotencyKey/);
+assert.match(storefront, /from'\.\/money'/);
+assert.equal(/\\bNumber\\(/.test(storefront), false, 'storefront must not use Number() for monetary arithmetic');
+assert.equal(/\\bparseFloat\\(/.test(storefront), false, 'storefront must not use parseFloat() for monetary arithmetic');
+assert.match(money, /BigInt/);
+assert.match(money, /multiplyMoney/);
 assert.match(storefront, /idempotency-key/);
 assert.match(storefront, /functions\.invoke\(['"]checkout-recovery['"]/);
 assert.match(checkout, /checkout_atomic_v2/);
