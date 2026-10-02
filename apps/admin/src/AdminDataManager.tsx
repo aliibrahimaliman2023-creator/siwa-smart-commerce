@@ -32,7 +32,7 @@ export function AdminDataManager({onChanged}:Props){
   logistics.from('shipping_rules').select('*').order('priority').limit(100)
  ]);setProducts(pp.data||[]);setVariants(vv.data||[]);setPrices(px.data||[]);setItems(ii.data||[]);setCarriers(cc.data||[]);setAreas(aa.data||[]);setMethods(mm.data||[]);setRules(rr.data||[])}
  useEffect(()=>{load()},[]);
- async function run(fn:()=>Promise<any>,ok:string){setBusy(true);setMsg('');try{const x=await fn();if(x?.error)throw new Error(x.error.message);setMsg(ok);await load();await onChanged()}catch(x:any){setMsg(x?.message||'حدث خطأ')}finally{setBusy(false)}}
+ async function run(fn:()=>any,ok:string){setBusy(true);setMsg('');try{const x=await fn();if(x?.error)throw new Error(x.error.message);setMsg(ok);await load();await onChanged()}catch(x:any){setMsg(x?.message||'حدث خطأ')}finally{setBusy(false)}}
  const input=(value:string,onChange:(v:string)=>void,placeholder:string)=><input value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>;
  return <section className="panel">{msg&&<div className={msg.startsWith('تم')?'ok':'error'}>{msg}</div>}<div className="admin-grid">
   <div className="card"><h3>إضافة منتج</h3>{input(p.name_ar,x=>setP({...p,name_ar:x}),'اسم المنتج بالعربي')}{input(p.name_en,x=>setP({...p,name_en:x}),'Product name')}{input(p.slug,x=>setP({...p,slug:x}),'slug')}{input(p.description_ar,x=>setP({...p,description_ar:x}),'الوصف العربي')}<select value={p.status} onChange={e=>setP({...p,status:e.target.value})}><option value="draft">Draft</option><option value="active">Active</option></select><button disabled={busy} onClick={()=>run(()=>catalog.from('products').insert(p),'تم إنشاء المنتج')}>حفظ المنتج</button></div>
