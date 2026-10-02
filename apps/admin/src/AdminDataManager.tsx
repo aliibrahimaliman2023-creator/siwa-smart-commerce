@@ -30,7 +30,7 @@ export function AdminDataManager({onChanged}:Props){
   logistics.from('shipping_areas').select('*').order('governorate').limit(100),
   logistics.from('shipping_methods').select('*').order('code').limit(100),
   logistics.from('shipping_rules').select('*').order('priority').limit(100)
- ]);const failed=[pp,vv,px,ii,cc,aa,mm,rr].find(x=>x.error);if(failed){setMsg(failed.error.message);return}setProducts(pp.data||[]);setVariants(vv.data||[]);setPrices(px.data||[]);setItems(ii.data||[]);setCarriers(cc.data||[]);setAreas(aa.data||[]);setMethods(mm.data||[]);setRules(rr.data||[])}
+ ]);const failed=[pp,vv,px,ii,cc,aa,mm,rr].find(x=>x.error);if(failed){setMsg(failed.error?.message||'تعذر تحميل بيانات الإدارة');return}setProducts(pp.data||[]);setVariants(vv.data||[]);setPrices(px.data||[]);setItems(ii.data||[]);setCarriers(cc.data||[]);setAreas(aa.data||[]);setMethods(mm.data||[]);setRules(rr.data||[])}
  useEffect(()=>{load()},[]);
  async function run(fn:()=>any,ok:string){setBusy(true);setMsg('');try{const x=await fn();if(x?.error)throw new Error(x.error.message);setMsg(ok);await load();await onChanged()}catch(x:any){setMsg(x?.message||'حدث خطأ')}finally{setBusy(false)}}
  const input=(value:string,onChange:(v:string)=>void,placeholder:string)=><input value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>;
