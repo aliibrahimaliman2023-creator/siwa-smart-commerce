@@ -21,6 +21,6 @@
     "@vitejs/plugin-react": "latest",
     "vite": "latest",
     "typescript": "latest",
-    "wrangler": "^4.0.0"
+    "wrangler": "4.135.0"
   }
 }
