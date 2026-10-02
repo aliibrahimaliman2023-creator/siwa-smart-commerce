@@ -32,9 +32,13 @@ for (const file of files) {
 
 const storefront = readFileSync('apps/storefront/src/main.tsx', 'utf8');
 const checkout = readFileSync('supabase/functions/checkout/index.ts', 'utf8');
+const recovery = readFileSync('supabase/functions/checkout-recovery/index.ts', 'utf8');
 
 assert.match(storefront, /idempotencyKey/);
 assert.match(storefront, /idempotency-key/);
+assert.match(storefront, /functions\.invoke\(['"]checkout-recovery['"]/);
 assert.match(checkout, /checkout_atomic_v2/);
+assert.match(recovery, /Authorization/);
+assert.match(recovery, /UNAUTHENTICATED/);
 
 console.log('runtime contracts: ok');
